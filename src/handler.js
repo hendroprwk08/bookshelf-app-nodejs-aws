@@ -86,19 +86,67 @@ const addBookHandler = (request, h) => {
 
 //default code 200
 const getAllBookHandler = (request, h) => {
+    const { name, reading, finished } = request.query;
+
+    //pencarian berdasarkan nama
+    if (name) {
+        const response = h.response({
+            status: 'success',
+            data: books.filter((b) => b.name.toLowerCase().includes(name.toLowerCase()))
+            .map((book) => ({
+                id: book.id,
+                name: book.name,
+                publisher: book.publisher,
+            })),
+        });
+
+        response.code(200);
+        return response;
+    } else if (reading) {
+        const response = h.response({
+            status: 'success',
+            data: books.filter((b) => b.reading == reading)
+                .map(book => ({
+                    id: book.id,
+                    name: book.name,
+                    publisher: book.publisher,
+                })),
+        });
+
+        response.code(200);
+        return response;
+    } else if (finished) {
+        const response = h.response({
+            status: 'success',
+            data: books.filter((b) => b.finished == finished).map(book => ({
+                id: book.id,
+                name: book.name,
+                publisher: book.publisher,
+            })),
+        });
+
+        response.code(200);
+        return response;
+    }
+
     //map untuk mengurai array dari books
-    hasilMap = books.map(book => ({
-        id: book.id,
-        name: book.name,
-        publisher: book.publisher,
-    }));
+    // const response = h.response({
+    //     status: 'success',
+    //     data: books.map(book => ({
+    //         id: book.id,
+    //         name: book.name,
+    //         publisher: book.publisher,
+    //     })),
+    // });
 
     const response = h.response({
         status: 'success',
-        data: hasilMap,
+        data: books,
     });
+
     response.code(200);
     return response;
+
 };
 
 const getBookByIdHandler = (request, h) => {
