@@ -90,10 +90,11 @@ const getAllBookHandler = (request, h) => {
 
     //pencarian berdasarkan nama
     if (name) {
+        const booksFilter = books.filter((b) => b.name.toLowerCase().includes(name.toLowerCase()));
+               
         const response = h.response({
             status: 'success',
-            data: books.filter((b) => b.name.toLowerCase().includes(name.toLowerCase()))
-            .map((book) => ({
+            data: booksFilter.map((book) => ({
                 id: book.id,
                 name: book.name,
                 publisher: book.publisher,
