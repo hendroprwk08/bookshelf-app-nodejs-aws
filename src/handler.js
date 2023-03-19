@@ -88,66 +88,70 @@ const addBookHandler = (request, h) => {
 const getAllBookHandler = (request, h) => {
     const { name, reading, finished } = request.query;
 
+    if (!name && !reading && !finished) {
+        //map untuk mengurai array dari books
+        const response = h.response({
+            status: 'success',
+            data: {
+                books: books.map((book) => ({
+                    id: book.id,
+                    name: book.name,
+                    publisher: book.publisher,
+                }))
+            },
+        }).code(200);
+
+        return response;
+    }
+
     //pencarian berdasarkan nama
     if (name) {
-        const booksFilter = books.filter((b) => b.name.toLowerCase().includes(name.toLowerCase()));
-               
         const response = h.response({
             status: 'success',
-            data: booksFilter.map((book) => ({
-                id: book.id,
-                name: book.name,
-                publisher: book.publisher,
-            })),
-        });
+            data: {
+                books: books
+                    .filter((book) => book.name.toLowerCase().includes(name.toLowerCase()))
+                    .map((book) => ({
+                        id: book.id,
+                        name: book.name,
+                        publisher: book.publisher,
+                    }))
+            },
+        }).code(200);
 
-        response.code(200);
         return response;
-    } else if (reading) {
+    }
+
+    if (reading) {
         const response = h.response({
             status: 'success',
-            data: books.filter((b) => b.reading == reading)
-                .map(book => ({
+            data: {
+                books: books.filter((book) => book.reading == reading)
+                    .map((book) => ({
+                        id: book.id,
+                        name: book.name,
+                        publisher: book.publisher,
+                    })),
+            }
+        }).code(200);
+
+        return response;
+    }
+
+    if (finished) {
+        const response = h.response({
+            status: 'success',
+            data: {
+                books: books.filter((book) => book.finished == finished).map((book) => ({
                     id: book.id,
                     name: book.name,
                     publisher: book.publisher,
                 })),
-        });
+            }
+        }).code(200);
 
-        response.code(200);
-        return response;
-    } else if (finished) {
-        const response = h.response({
-            status: 'success',
-            data: books.filter((b) => b.finished == finished).map(book => ({
-                id: book.id,
-                name: book.name,
-                publisher: book.publisher,
-            })),
-        });
-
-        response.code(200);
         return response;
     }
-
-    //map untuk mengurai array dari books
-    // const response = h.response({
-    //     status: 'success',
-    //     data: books.map(book => ({
-    //         id: book.id,
-    //         name: book.name,
-    //         publisher: book.publisher,
-    //     })),
-    // });
-
-    const response = h.response({
-        status: 'success',
-        data: books,
-    });
-
-    response.code(200);
-    return response;
-
 };
 
 const getBookByIdHandler = (request, h) => {
